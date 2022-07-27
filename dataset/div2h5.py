@@ -1,9 +1,9 @@
 import os
 import glob
 import h5py
-import scipy.misc as misc
+#import scipy.misc as misc
 import numpy as np
-
+import imageio
 dataset_dir = "DIV2K/"
 dataset_type = "train"
 
@@ -24,6 +24,6 @@ for subdir in ["HR", "X2", "X3", "X4"]:
     grp = f.create_group(subdir)
 
     for i, path in enumerate(im_paths):
-        im = misc.imread(path)
+        im = imageio.imread(path)
         print(path)
         grp.create_dataset(str(i), data=im)
