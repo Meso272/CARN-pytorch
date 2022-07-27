@@ -79,10 +79,9 @@ class TestDataset(data.Dataset):
 
         self.name  = dirname.split("/")[-1]
         self.scale = scale
-        
         if "DIV" in self.name:
-            self.hr = glob.glob(os.path.join("{}_HR".format(dirname), "*.png"))
-            self.lr = glob.glob(os.path.join("{}_LR_bicubic".format(dirname), 
+            self.hr = glob.glob(os.path.join("{}_valid_HR".format(dirname), "*.png"))
+            self.lr = glob.glob(os.path.join("{}_valid_LR_bicubic".format(dirname), 
                                              "X{}/*.png".format(scale)))
         else:
             all_files = glob.glob(os.path.join(dirname, "x{}/*.png".format(scale)))
@@ -91,7 +90,6 @@ class TestDataset(data.Dataset):
 
         self.hr.sort()
         self.lr.sort()
-
         self.transform = transforms.Compose([
             transforms.ToTensor()
         ])
