@@ -82,7 +82,7 @@ class Solver():
                 
                 self.optim.zero_grad()
                 loss.backward()
-                nn.utils.clip_grad_norm(self.refiner.parameters(), cfg.clip)
+                nn.utils.clip_grad_norm_(self.refiner.parameters(), cfg.clip)
                 self.optim.step()
 
                 learning_rate = self.decay_learning_rate()
@@ -91,6 +91,7 @@ class Solver():
                 
                 self.step += 1
                 if cfg.verbose and self.step % cfg.print_interval == 0:
+                    '''
                     if cfg.scale > 0:
                         psnr = self.evaluate("dataset/Urban100", scale=cfg.scale, num_step=self.step)
                         self.writer.add_scalar("Urban100", psnr, self.step)
@@ -99,7 +100,8 @@ class Solver():
                         self.writer.add_scalar("Urban100_2x", psnr[0], self.step)
                         self.writer.add_scalar("Urban100_3x", psnr[1], self.step)
                         self.writer.add_scalar("Urban100_4x", psnr[2], self.step)
-                            
+                    '''
+                    print("Step %d finished." % self.step)
                     self.save(cfg.ckpt_dir, cfg.ckpt_name)
 
             if self.step > cfg.max_steps: break
