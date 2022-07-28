@@ -41,10 +41,10 @@ class Net(nn.Module):
         multi_scale = kwargs.get("multi_scale")
         group = kwargs.get("group", 1)
 
-        self.sub_mean = ops.MeanShift((0.4488, 0.4371, 0.4040), sub=True)#for rgb, maybe removed for sci
-        self.add_mean = ops.MeanShift((0.4488, 0.4371, 0.4040), sub=False)
+       # self.sub_mean = ops.MeanShift((0.4488, 0.4371, 0.4040), sub=True)#for rgb, maybe removed for sci
+        #self.add_mean = ops.MeanShift((0.4488, 0.4371, 0.4040), sub=False)
         
-        self.entry = nn.Conv2d(3, 64, 3, 1, 1)
+        self.entry = nn.Conv2d(1, 64, 3, 1, 1)
 
         self.b1 = Block(64, 64)
         self.b2 = Block(64, 64)
@@ -56,10 +56,10 @@ class Net(nn.Module):
         self.upsample = ops.UpsampleBlock(64, scale=scale, 
                                           multi_scale=multi_scale,
                                           group=group)
-        self.exit = nn.Conv2d(64, 3, 3, 1, 1)
+        self.exit = nn.Conv2d(64, 1, 3, 1, 1)
                 
     def forward(self, x, scale):
-        x = self.sub_mean(x)
+        #x = self.sub_mean(x)
         x = self.entry(x)
         c0 = o0 = x
 
@@ -78,6 +78,6 @@ class Net(nn.Module):
         out = self.upsample(o3, scale=scale)
 
         out = self.exit(out)
-        out = self.add_mean(out)
+        #out = self.add_mean(out)
 
         return out
