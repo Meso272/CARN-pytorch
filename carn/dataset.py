@@ -56,19 +56,20 @@ class TrainDataset(data.Dataset):
         
         h5f.close()
         
-        for h in self.hr:
-            print(np.max(h))
+
         self.transform = transforms.Compose([
             transforms.ToTensor()
         ])
 
     def __getitem__(self, index):
         size = self.size
-
+        print(np.max(self.hr[index]))
         item = [(self.hr[index], self.lr[i][index]) for i, _ in enumerate(self.lr)]
+
         item = [random_crop(hr, lr, size, self.scale[i]) for i, (hr, lr) in enumerate(item)]
         item = [random_flip_and_rotate(hr, lr) for hr, lr in item]
-        
+        for h,l in item:
+            print(np.max(h))
         return [(self.transform(hr), self.transform(lr)) for hr, lr in item]
 
     def __len__(self):
