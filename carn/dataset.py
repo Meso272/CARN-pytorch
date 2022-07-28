@@ -55,7 +55,9 @@ class TrainDataset(data.Dataset):
             self.lr = [[v[:] for v in h5f["X{}".format(scale)].values()]]
         
         h5f.close()
-
+        
+        for h in self.hr:
+            print(np.max(h))
         self.transform = transforms.Compose([
             transforms.ToTensor()
         ])
