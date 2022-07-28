@@ -73,8 +73,8 @@ class Solver():
                     # i know this is stupid but just temporary
                     scale = random.randint(2, 4)
                     hr, lr = inputs[scale-2][0], inputs[scale-2][1]
-                print(torch.max(hr))
-                print(torch.min(hr))
+                #print(torch.max(hr))
+                #print(torch.min(hr))
                 hr = hr.to(self.device)
                 lr = lr.to(self.device)
                 
