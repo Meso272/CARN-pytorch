@@ -14,12 +14,12 @@ dt = h5py.special_dtype(vlen=np.dtype(np.float32))
 
 for subdir in ["HR", "X2"]:
     if subdir in ["HR"]:
-        im_paths = glob.glob(os.path.join(dataset_dir, 
+        im_paths = glob.glob(os.path.join(dataset_dir,field,
                                           "hr_train", 
                                           "*.dat"))
 
     else:
-        im_paths = glob.glob(os.path.join(dataset_dir, 
+        im_paths = glob.glob(os.path.join(dataset_dir,field,
                                           "lr_train", 
                                           "*.dat"))
     im_paths.sort()
