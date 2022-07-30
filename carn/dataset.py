@@ -46,7 +46,7 @@ class TrainDataset(data.Dataset):
         print("01")
         h5f = h5py.File(path, "r")
         print("02")
-        print(h5f["HR"].values())
+        print(len(h5f["HR"].values()))
         self.hr = [v[:] for v in h5f["HR"].values()]
         print("03")
         # perform multi-scale training
