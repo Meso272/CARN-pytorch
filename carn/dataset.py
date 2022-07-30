@@ -56,7 +56,7 @@ class TrainDataset(data.Dataset):
         
         h5f.close()
         print(len(self.hr))
-        print(len(self.lr))
+        print(len(self.lr[0]))
 
         self.transform = transforms.Compose([
             transforms.ToTensor()
