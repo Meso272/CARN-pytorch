@@ -25,6 +25,7 @@ for subdir in ["HR", "X2", "X3", "X4"]:
 
     for i, path in enumerate(im_paths):
         im = imageio.imread(path)
+        print(im.shape)
         #print(np.max(im))
         #print(np.min(im))
         print(path)

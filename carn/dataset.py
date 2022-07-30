@@ -53,7 +53,7 @@ class TrainDataset(data.Dataset):
         else:
             self.scale = [scale]
             self.lr = [[v[:] for v in h5f["X{}".format(scale)].values()]]
-        print(self.hr[0].shape)
+        
         h5f.close()
         
 
