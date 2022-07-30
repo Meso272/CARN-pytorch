@@ -29,23 +29,24 @@ class Solver():
         self.optim = optim.Adam(
             filter(lambda p: p.requires_grad, self.refiner.parameters()), 
             cfg.lr)
-        
+       
         self.train_data = TrainDataset(cfg.train_data_path, 
                                        scale=cfg.scale, 
                                        size=cfg.patch_size)
+        
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=cfg.batch_size,
                                        num_workers=1,
                                        shuffle=True, drop_last=True)
         
-        
+       
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.refiner = self.refiner.to(self.device)
         self.loss_fn = self.loss_fn
 
         self.cfg = cfg
         self.step = 0
-        
+       
         self.writer = SummaryWriter(log_dir=os.path.join("runs", cfg.ckpt_name))
         if cfg.verbose:
             num_params = 0
@@ -57,9 +58,10 @@ class Solver():
 
     def fit(self):
         cfg = self.cfg
-        refiner = nn.DataParallel(self.refiner, 
+        if self.device=="cuda" and cfg.num_gpu>1:
+            self.refiner = nn.DataParallel(self.refiner, 
                                   device_ids=range(cfg.num_gpu))
-        
+        print("0")
         learning_rate = cfg.lr
         while True:
             for inputs in self.train_loader:
