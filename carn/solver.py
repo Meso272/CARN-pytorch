@@ -184,7 +184,7 @@ class Solver():
             print("Saving opt")
             opt_save_path = os.path.join(
                 ckpt_dir, "{}_{}.pth.opt".format(ckpt_name, self.step))
-            torch.save(self.optim.state_dict(), save_path)
+            torch.save(self.optim.state_dict(), opt_save_path)
 
 
     def decay_learning_rate(self):
