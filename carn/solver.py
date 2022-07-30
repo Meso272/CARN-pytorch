@@ -36,7 +36,7 @@ class Solver():
         
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=cfg.batch_size,
-                                       num_workers=0,
+                                       num_workers=32,
                                        shuffle=True, drop_last=True)
         
        
