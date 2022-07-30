@@ -106,7 +106,7 @@ class Solver():
                         self.writer.add_scalar("Urban100_4x", psnr[2], self.step)
                     '''
                     print("Step %d finished." % self.step)
-                    self.save(cfg.ckpt_dir, cfg.ckpt_name)
+                    self.save(cfg.ckpt_dir, cfg.ckpt_name,True)
 
             if self.step > cfg.max_steps: break
 
@@ -165,7 +165,7 @@ class Solver():
 
         return mean_psnr
 
-    def load(self, path):
+    def load(self, path,load_opt=False):
         self.refiner.load_state_dict(torch.load(path))
         splited = path.split(".")[0].split("_")[-1]
         try:
@@ -173,11 +173,18 @@ class Solver():
         except ValueError:
             self.step = 0
         print("Load pretrained {} model".format(path))
+        if load_opt:
+            self.optim.load_state_dict(torch.load(path+".opt"))
 
-    def save(self, ckpt_dir, ckpt_name):
+    def save(self, ckpt_dir, ckpt_name,save_opt=False):
         save_path = os.path.join(
             ckpt_dir, "{}_{}.pth".format(ckpt_name, self.step))
         torch.save(self.refiner.state_dict(), save_path)
+        if save_opt:
+            opt_save_path = os.path.join(
+                ckpt_dir, "{}_{}.pth.opt".format(ckpt_name, self.step))
+            torch.save(self.optim.state_dict(), save_path)
+
 
     def decay_learning_rate(self):
         lr = self.cfg.lr * (0.5 ** (self.step // self.cfg.decay))
