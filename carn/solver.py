@@ -81,7 +81,7 @@ class Solver():
                 hr = hr.to(self.device)
                 lr = lr.to(self.device)
                 
-                sr = refiner(lr, scale)
+                sr = self.refiner(lr, scale)
                 loss = self.loss_fn(sr, hr)
                 
                 self.optim.zero_grad()
