@@ -94,7 +94,13 @@ class Solver():
                     param_group["lr"] = learning_rate
                 
                 self.step += 1
-                if cfg.verbose and self.step % cfg.print_interval == 0:
+
+                self.step % cfg.print_interval == 0:
+                    
+                    
+                    print("Step %d finished." % self.step)
+
+                self.step % cfg.save_interval == 0:
                     '''
                     if cfg.scale > 0:
                         psnr = self.evaluate("dataset/Urban100", scale=cfg.scale, num_step=self.step)
@@ -105,7 +111,7 @@ class Solver():
                         self.writer.add_scalar("Urban100_3x", psnr[1], self.step)
                         self.writer.add_scalar("Urban100_4x", psnr[2], self.step)
                     '''
-                    print("Step %d finished." % self.step)
+                    
                     self.save(cfg.ckpt_dir, cfg.ckpt_name,True)
 
             if self.step > cfg.max_steps: break

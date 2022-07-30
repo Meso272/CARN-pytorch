@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument("--ckpt_name", type=str)
     
     parser.add_argument("--print_interval", type=int, default=1000)
+    parser.add_argument("--save_interval", type=int, default=10000)
     parser.add_argument("--train_data_path", type=str, 
                         default="dataset/DIV2K_train.h5")
     parser.add_argument("--ckpt_dir", type=str,
