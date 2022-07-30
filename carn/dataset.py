@@ -43,12 +43,12 @@ class TrainDataset(data.Dataset):
         super(TrainDataset, self).__init__()
 
         self.size = size
-        print("01")
+        #print("01")
         h5f = h5py.File(path, "r")
-        print("02")
-        print(len(h5f["HR"].values()))
+        #print("02")
+        #print(len(h5f["HR"].values()))
         self.hr = [v[:] for v in h5f["HR"].values()]
-        print("03")
+        #print("03")
         # perform multi-scale training
         if scale == 0:
             self.scale = [2, 3, 4]
@@ -56,7 +56,7 @@ class TrainDataset(data.Dataset):
         else:
             self.scale = [scale]
             self.lr = [[v[:] for v in h5f["X{}".format(scale)].values()]]
-        print("04")
+       # print("04")
         h5f.close()
         #print(len(self.hr))
         #print(len(self.lr[0]))
