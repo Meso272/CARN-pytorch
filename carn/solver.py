@@ -95,12 +95,12 @@ class Solver():
                 
                 self.step += 1
 
-                self.step % cfg.print_interval == 0:
+                if cfg.verbose and self.step % cfg.print_interval == 0:
                     
                     
                     print("Step %d finished." % self.step)
 
-                self.step % cfg.save_interval == 0:
+                if self.step % cfg.save_interval == 0:
                     '''
                     if cfg.scale > 0:
                         psnr = self.evaluate("dataset/Urban100", scale=cfg.scale, num_step=self.step)
