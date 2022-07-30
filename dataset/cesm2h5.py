@@ -26,7 +26,7 @@ for subdir in ["HR", "X2"]:
     grp = f.create_group(subdir)
 
     for i, path in enumerate(im_paths):
-        im = np.fromfile(path,dtype=np.float32)
+        im = np.fromfile(path,dtype=np.float32).reshape((1800,3600,1))
         #print(np.max(im))
         #print(np.min(im))
         print(path)
