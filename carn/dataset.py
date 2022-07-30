@@ -68,6 +68,9 @@ class TrainDataset(data.Dataset):
 
         item = [random_crop(hr, lr, size, self.scale[i]) for i, (hr, lr) in enumerate(item)]
         item = [random_flip_and_rotate(hr, lr) for hr, lr in item]
+        for hr,lr in item:
+            print(hr.shape)
+            
         
         return [(self.transform(hr), self.transform(lr)) for hr, lr in item]
 
