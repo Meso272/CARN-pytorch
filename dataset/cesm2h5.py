@@ -17,6 +17,7 @@ for subdir in ["HR", "X2"]:
         im_paths = glob.glob(os.path.join(dataset_dir,field,
                                           "hr_train", 
                                           "*.dat"))
+        print(len(im_paths))
 
     else:
         im_paths = glob.glob(os.path.join(dataset_dir,field,
