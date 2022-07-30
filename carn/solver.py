@@ -181,6 +181,7 @@ class Solver():
             ckpt_dir, "{}_{}.pth".format(ckpt_name, self.step))
         torch.save(self.refiner.state_dict(), save_path)
         if save_opt:
+            print("Saving opt")
             opt_save_path = os.path.join(
                 ckpt_dir, "{}_{}.pth.opt".format(ckpt_name, self.step))
             torch.save(self.optim.state_dict(), save_path)

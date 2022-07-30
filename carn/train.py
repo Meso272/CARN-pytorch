@@ -16,6 +16,8 @@ def parse_args():
                         default="dataset/DIV2K_train.h5")
     parser.add_argument("--ckpt_dir", type=str,
                         default="checkpoint")
+    parser.add_argument("--ckpt_file", type=str,
+                        default=None)
     parser.add_argument("--sample_dir", type=str,
                         default="sample/")
     
@@ -45,7 +47,11 @@ def main(cfg):
     print(json.dumps(vars(cfg), indent=4, sort_keys=True))
     
     solver = Solver(net, cfg)
-    solver.fit()
+    if cfg.ckpt_file==None:
+        solver.fit()
+    else:
+        solver.load(cfg.ckpt_file,True)
+        solver.fit()
 
 if __name__ == "__main__":
     cfg = parse_args()
