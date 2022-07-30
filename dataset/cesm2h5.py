@@ -23,6 +23,7 @@ for subdir in ["HR", "X2"]:
         im_paths = glob.glob(os.path.join(dataset_dir,field,
                                           "lr_train", 
                                           "*.dat"))
+        print(len(im_paths))
     im_paths.sort()
     grp = f.create_group(subdir)
 
