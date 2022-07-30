@@ -63,11 +63,13 @@ class TrainDataset(data.Dataset):
 
     def __getitem__(self, index):
         size = self.size
-       
+        print(size)
         item = [(self.hr[index], self.lr[i][index]) for i, _ in enumerate(self.lr)]
-
+        print(1)
         item = [random_crop(hr, lr, size, self.scale[i]) for i, (hr, lr) in enumerate(item)]
+        print(2)
         item = [random_flip_and_rotate(hr, lr) for hr, lr in item]
+        print(3)
       
 
         
