@@ -39,16 +39,17 @@ def random_flip_and_rotate(im1, im2):
 
 
 class TrainDataset(data.Dataset):
-    def __init__(self, path, size, scale):
+    def __init__(self, path, size, scale,fix_length=0):
         super(TrainDataset, self).__init__()
 
         self.size = size
+        self.length=fix_length
         #print("01")
         h5f = h5py.File(path, "r")
         #print("02")
         #print(len(h5f["HR"].values()))
         self.hr = [v[:] for v in h5f["HR"].values()]
-
+        self.hrlen=len(self.hr)
         #print("03")
         # perform multi-scale training
         if scale == 0:
@@ -65,9 +66,11 @@ class TrainDataset(data.Dataset):
         self.transform = transforms.Compose([
             transforms.ToTensor()
         ])
-        print(len(self.hr))
+       
 
     def __getitem__(self, index):
+        if self.length:
+            index= index % self.hrlen
         size = self.size
         
         item = [(self.hr[index], self.lr[i][index]) for i, _ in enumerate(self.lr)]
@@ -81,7 +84,9 @@ class TrainDataset(data.Dataset):
         return [(self.transform(hr), self.transform(lr)) for hr, lr in item]
 
     def __len__(self):
-        return len(self.hr)
+        if self.length:
+            return self.length
+        else return self.hrlen
         
 
 class TestDataset(data.Dataset):
