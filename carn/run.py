@@ -96,4 +96,4 @@ if __name__=='__main__':
 
     print(f"======= Training  =======")
     runner.fit(experiment)
-    runner.save_checkpoint(config['logging_params']['ckpt_save_dir']+"/last.ckpt")
+    runner.save_checkpoint(ckpt_save_dir+"/last.ckpt")
