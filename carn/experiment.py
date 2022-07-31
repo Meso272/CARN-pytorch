@@ -101,7 +101,7 @@ class SRexperiment(pl.LightningModule):
         scheds = []
 
         optimizer = optim.Adam(
-            filter(lambda p: p.requires_grad, self.refiner.parameters()), 
+            filter(lambda p: p.requires_grad, self.model.parameters()), 
             cfg.lr)
         optims.append(optimizer)
        
