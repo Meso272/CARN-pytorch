@@ -27,20 +27,20 @@ if __name__=='__main__':
     
     
     parser.add_argument("--num_gpu", type=int, default=1)
-    parser.add_argument("--ds_len", type=int, default=800)
+    parser.add_argument("--ds_len", type=int, default=1600)
     parser.add_argument("--shave", type=int, default=20)
     parser.add_argument("--scale", type=int, default=2)
 
     parser.add_argument("--verbose", action="store_true", default="store_true")
 
     parser.add_argument("--group", type=int, default=1)
-    parser.add_argument("--epoch", type=int, default=50)
+    parser.add_argument("--epoch", type=int, default=4000)
     parser.add_argument("--patch_size", type=int, default=64)
     parser.add_argument("--batch_size", type=int, default=64)
-    parser.add_argument("--save_interval", type=int, default=10)
+    parser.add_argument("--save_interval", type=int, default=400)
     
     parser.add_argument("--lr", type=float, default=0.0001)
-    parser.add_argument("--gamma", type=float, default=0.95)
+    parser.add_argument("--gamma", type=float, default=0.99983)
     parser.add_argument("--clip", type=float, default=10.0)
 
     parser.add_argument("--loss_fn", type=str, 

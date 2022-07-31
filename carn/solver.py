@@ -32,7 +32,7 @@ class Solver():
        
         self.train_data = TrainDataset(cfg.train_data_path, 
                                        scale=cfg.scale, 
-                                       size=cfg.patch_size,cfg.ds_len)
+                                       size=cfg.patch_size,fix_length=cfg.ds_len)
         
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=cfg.batch_size,
