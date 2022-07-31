@@ -66,7 +66,8 @@ class Solver():
         while True:
             for inputs in self.train_loader:
                 print(len(inputs))
-                print(inputs[0].shape)
+                print(len(inputs[0]))
+                print(inputs[0][0].size())
                 #print(self.step)
                 self.refiner.train()
 
