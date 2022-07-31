@@ -36,7 +36,7 @@ if __name__=='__main__':
     arser.add_argument("--epoch", type=int, default=50)
     parser.add_argument("--patch_size", type=int, default=64)
     parser.add_argument("--batch_size", type=int, default=64)
-    parser.add_argument("--max_steps", type=int, default=200000)
+    parser.add_argument("--save_interval", type=int, default=10)
     
     parser.add_argument("--lr", type=float, default=0.0001)
     parser.add_argument("--gamma", type=float, default=0.95)
@@ -79,7 +79,7 @@ if __name__=='__main__':
         #monitor='loss',
         #mode='min',
         
-        period=10
+        period=args.save_interval
     )
     gpu_list=list(range(args.num_gpu))
     runner = Trainer(min_epochs=1,
