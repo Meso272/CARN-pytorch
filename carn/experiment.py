@@ -14,15 +14,28 @@ import pytorch_lightning as pl
 #import torchvision.utils as vutils
 from torch.utils.data import DataLoader
 from dataset import TrainDataset, TestDataset
-class VAEXperiment(pl.LightningModule):
+class SRexperiment(pl.LightningModule):
 
     def __init__(self,
                  model,
                  cfg) -> None:
         super(VAEXperiment, self).__init__()
-
-        self.model = model
         self.cfg = cfg
+        if cfg.scale > 0:
+            self.model = model(scale=cfg.scale, 
+                                 group=cfg.group)
+        else:
+            self.model = model(multi_scale=True, 
+                                 group=cfg.group)
+        if cfg.loss_fn in ["MSE"]: 
+            self.loss_fn = nn.MSELoss()
+        elif cfg.loss_fn in ["L1"]: 
+            self.loss_fn = nn.L1Loss()
+        elif cfg.loss_fn in ["SmoothL1"]:
+            self.loss_fn = nn.SmoothL1Loss()
+
+        #self.cur_scale=self.cfg.scale
+        
         self.curr_device = None
         self.hold_graph = False
   
@@ -33,28 +46,31 @@ class VAEXperiment(pl.LightningModule):
         except:
             pass
 
-    def forward(self, input: Tensor, **kwargs) -> Tensor:
-        return self.model(input, **kwargs)
+    def forward(self, input: Tensor, scale: int,**kwargs) -> Tensor:
+        return self.model(input, scale,**kwargs)
 
-    def training_step(self, batch, batch_idx, optimizer_idx = 0,scalar=False):
-        real_img, labels = batch
-        self.curr_device = real_img.device
-
-        results = self.forward(real_img, labels = labels)
-        train_loss = self.model.loss_function(*results,
-                                              M_N = self.params['batch_size']/ self.num_train_imgs,
-                                              optimizer_idx=optimizer_idx,
-                                              batch_idx = batch_idx)
-        try:
-            self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
-        except:
-            pass
-        if scalar:
-            return train_loss['loss']
+    def training_step(self, batch, batch_idx):
+        if self.cfg.scale > 0:
+            scale = self.cfg.scale
+            hr, lr = batch[-1][0], batch[-1][1]
         else:
-            return train_loss
+                   
+            scale = random.randint(2, 4)
+            hr, lr = inputs[scale-2][0], inputs[scale-2][1]
+            #self.cur_scale=scale
+        self.curr_device = hr.device
 
+
+
+        sr = self.forward(lr,scale)
+        train_loss = self.loss_fn(sr,hr)
+       
+       
+        return train_loss
+
+    '''
     def validation_step(self, batch, batch_idx, optimizer_idx = 0):
+        
         real_img, labels = batch
         self.curr_device = real_img.device
 
@@ -65,47 +81,18 @@ class VAEXperiment(pl.LightningModule):
                                             batch_idx = batch_idx)
 
         return val_loss
+        
+        return 0
 
     def validation_end(self, outputs):
+        
         avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
         tensorboard_logs = {'avg_val_loss': avg_loss}
         self.sample_images()
         return {'val_loss': avg_loss, 'log': tensorboard_logs}
-    
-    def sample_images(self):
-        if self.params['dataset'] != 'celeba':
-            return
-        # Get sample reconstruction image
-        test_input, test_label = next(iter(self.sample_dataloader))
-        test_input = test_input.to(self.curr_device)
-        test_label = test_label.to(self.curr_device)
-        recons = self.model.generate(test_input, labels = test_label)
-        vutils.save_image(recons.data,
-                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-                          f"recons_{self.logger.name}_{self.current_epoch}.png",
-                          normalize=True,
-                          nrow=12)
-
-        # vutils.save_image(test_input.data,
-        #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-        #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
-        #                   normalize=True,
-        #                   nrow=12)
-
-        try:
-            samples = self.model.sample(144,
-                                        self.curr_device,
-                                        labels = test_label)
-            vutils.save_image(samples.cpu().data,
-                              f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-                              f"{self.logger.name}_{self.current_epoch}.png",
-                              normalize=True,
-                              nrow=12)
-        except:
-            pass
-
-
-        del test_input, recons #, samples
+        
+        return 0
+    '''
 
 
     def configure_optimizers(self):
@@ -113,82 +100,33 @@ class VAEXperiment(pl.LightningModule):
         optims = []
         scheds = []
 
-        optimizer = optim.Adam(filter(lambda p: p.requires_grad, self.model.parameters()),
-                               lr=self.params['LR'],
-                               weight_decay=self.params['weight_decay'])
+        optimizer = optim.Adam(
+            filter(lambda p: p.requires_grad, self.refiner.parameters()), 
+            cfg.lr)
         optims.append(optimizer)
-        # Check if more than 1 optimizer is required (Used for adversarial training)
-        try:
-            if self.params['LR_2'] is not None:
-                optimizer2 = optim.Adam(getattr(self.model,self.params['submodel']).parameters(),
-                                        lr=self.params['LR_2'])
-                optims.append(optimizer2)
-        except:
-            pass
+       
 
         try:
-            if self.params['scheduler_gamma'] is not None:
+            if self.params['gamma'] is not None:
                 scheduler = optim.lr_scheduler.ExponentialLR(optims[0],
-                                                             gamma = self.params['scheduler_gamma'])
+                                                             gamma = self.params['gamma'])
                 scheds.append(scheduler)
 
-                # Check if another scheduler is required for the second optimizer
-                try:
-                    if self.params['scheduler_gamma_2'] is not None:
-                        scheduler2 = optim.lr_scheduler.ExponentialLR(optims[1],
-                                                                      gamma = self.params['scheduler_gamma_2'])
-                        scheds.append(scheduler2)
-                except:
-                    pass
+                
                 return optims, scheds
         except:
             return optims
 
     @data_loader
     def train_dataloader(self):
-        transform = self.data_transforms()
-        self.params['epsilon']=float(self.params['epsilon'])
-        if self.params['dataset'] == 'celeba':
-            dataset = CelebA(root = self.params['data_path'],
-                             split = "train",
-                             transform=transform,
-                             download=True)
-        elif self.params['dataset'] == 'cesm':
-            dataset=CLDHGH(path=self.params['data_path'],start=0,end=50,size=self.params['img_size'],normalize=True,epsilon=self.params['epsilon'])
-        elif self.params['dataset'] =='cesm_new':
-
-            dataset=CESM(path=self.params['data_path'],start=0,end=50,size=self.params['img_size'],field=self.params['field'],global_max=self.params['max'],global_min=self.params['min'],epsilon=self.params['epsilon'])
-        elif self.params['dataset'] =='nyx':
-
-            dataset=NYX(path=self.params['data_path'],start=self.params['start'],end=self.params['end'],size=self.params['img_size'],field=self.params['field'],log=self.params['log'],global_max=self.params['max'],global_min=self.params['min'],epsilon=self.params['epsilon'])
-        elif self.params['dataset'] =='exafel':
-            dataset=EXAFEL(path=self.params['data_path'],start=0,end=300,size=self.params['img_size'],global_max=self.params['max'],global_min=self.params['min'],epsilon=self.params['epsilon'])
-        elif self.params['dataset'] =='hurricane':
-            dataset=Hurricane(path=self.params['data_path'],start=1,end=41,size=self.params['img_size'],field=self.params['field'],global_max=self.params['max'],global_min=self.params['min'],epsilon=self.params['epsilon'])
-        elif self.params['dataset'] == 'exaalt':
-            dataset=EXAALT(path=self.params['data_path'],start=0,end=4000)
-        elif self.params['dataset'] == 'aramco':
-            dataset=ARAMCO(path=self.params['data_path'],start=self.params['start'],end=self.params['end'],size=self.params['img_size'],global_max=0.0386,global_min=-0.0512,cache_size=self.params['cache_size'],epsilon=self.params['epsilon'])
-        elif self.params['dataset'] == 'qmcpack':
-            dataset=QMCPACK(path=self.params['data_path'],start=self.params['start'],end=self.params['end'],size=self.params['img_size'],global_max=20.368572,global_min=-21.25822,epsilon=self.params['epsilon'])
-        elif self.params['dataset'] == 'miranda':
-            dataset=MIRANDA(path=self.params['data_path'],start=self.params['start'],end=self.params['end'],size=self.params['img_size'],global_max=3,global_min=0.99,epsilon=self.params['epsilon'])
-        elif self.params['dataset'] =='turbulence':
-
-            dataset=Turbulence(path=self.params['data_path'],field=self.params['field'],side_length=self.params['side_length'],start=self.params['start'],end=self.params['end'],step=self.params['step'],size=self.params['img_size'],ratio=self.params['ratio'],global_max=self.params['max'],global_min=self.params['min'],epsilon=self.params['epsilon'])
-        elif self.params['dataset'] == 'aps':
-            dataset=APS(path=self.params['data_path'],start=self.params['start'],end=self.params['end'],size=self.params['img_size'],global_max=65535.0,global_min=0.0,cache_size=-1,epsilon=self.params['epsilon'])
-        elif self.params['dataset'] =='hacc':
-            dataset=HACC(path=self.params['data_path'],start=self.params['start'],end=self.params['end'],size=self.params['img_size'],field=self.params['field'],global_max=self.params['max'],global_min=self.params['min'],epsilon=self.params['epsilon'])
-        else:
-            raise ValueError('Undefined dataset type')
-
-        self.num_train_imgs = len(dataset)
-        return DataLoader(dataset,
-                          batch_size= self.params['batch_size'],
-                          shuffle = True,
-                          drop_last=True,num_workers=0)
-
+        train_dataset=TrainDataset(cfg.train_data_path, 
+                                       scale=cfg.scale, 
+                                       size=cfg.patch_size)
+        return DataLoader(train_dataset,
+                                       batch_size=cfg.batch_size,
+                                       num_workers=32,
+                                       shuffle=True, drop_last=True)
+    '''
     @data_loader
     def val_dataloader(self):
         transform = self.data_transforms()
@@ -310,4 +248,4 @@ class VAEXperiment(pl.LightningModule):
             transform =  SetRange
             #raise ValueError('Undefined dataset type')
         return transform
-
+    '''

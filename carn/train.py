@@ -35,6 +35,7 @@ def parse_args():
     parser.add_argument("--max_steps", type=int, default=200000)
     parser.add_argument("--decay", type=int, default=150000)
     parser.add_argument("--lr", type=float, default=0.0001)
+    parser.add_argument("--gamma", type=float, default=0.95)
     parser.add_argument("--clip", type=float, default=10.0)
 
     parser.add_argument("--loss_fn", type=str, 
