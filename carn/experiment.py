@@ -41,10 +41,7 @@ class SRexperiment(pl.LightningModule):
   
 
 
-        try:
-            self.hold_graph = self.params['retain_first_backpass']
-        except:
-            pass
+       
 
     def forward(self, input, scale,**kwargs):
         return self.model(input, scale,**kwargs)
@@ -102,14 +99,14 @@ class SRexperiment(pl.LightningModule):
 
         optimizer = optim.Adam(
             filter(lambda p: p.requires_grad, self.model.parameters()), 
-            cfg.lr)
+            self.cfg.lr)
         optims.append(optimizer)
        
 
         try:
-            if self.params['gamma'] is not None:
+            if self.cfg.gamma is not None:
                 scheduler = optim.lr_scheduler.ExponentialLR(optims[0],
-                                                             gamma = self.params['gamma'])
+                                                             gamma = self.cfg.gamma)
                 scheds.append(scheduler)
 
                 
@@ -119,11 +116,11 @@ class SRexperiment(pl.LightningModule):
 
     @data_loader
     def train_dataloader(self):
-        train_dataset=TrainDataset(cfg.train_data_path, 
-                                       scale=cfg.scale, 
-                                       size=cfg.patch_size)
+        train_dataset=TrainDataset(self.cfg.train_data_path, 
+                                       scale=self.cfg.scale, 
+                                       size=self.cfg.patch_size)
         return DataLoader(train_dataset,
-                                       batch_size=cfg.batch_size,
+                                       batch_size=self.cfg.batch_size,
                                        num_workers=32,
                                        shuffle=True, drop_last=True)
     '''
