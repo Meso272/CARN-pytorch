@@ -46,7 +46,7 @@ class SRexperiment(pl.LightningModule):
         except:
             pass
 
-    def forward(self, input, scale,**kwargs) 
+    def forward(self, input, scale,**kwargs):
         return self.model(input, scale,**kwargs)
 
     def training_step(self, batch, batch_idx):
