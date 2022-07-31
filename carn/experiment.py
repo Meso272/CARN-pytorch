@@ -19,7 +19,7 @@ class SRexperiment(pl.LightningModule):
     def __init__(self,
                  model,
                  cfg) -> None:
-        super(VAEXperiment, self).__init__()
+        super(SRexperiment, self).__init__()
         self.cfg = cfg
         if cfg.scale > 0:
             self.model = model(scale=cfg.scale, 
