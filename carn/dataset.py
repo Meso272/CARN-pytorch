@@ -48,6 +48,7 @@ class TrainDataset(data.Dataset):
         #print("02")
         #print(len(h5f["HR"].values()))
         self.hr = [v[:] for v in h5f["HR"].values()]
+
         #print("03")
         # perform multi-scale training
         if scale == 0:
@@ -64,6 +65,7 @@ class TrainDataset(data.Dataset):
         self.transform = transforms.Compose([
             transforms.ToTensor()
         ])
+        print(len(self.hr))
 
     def __getitem__(self, index):
         size = self.size
