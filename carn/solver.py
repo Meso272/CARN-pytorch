@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from dataset import TrainDataset, TestDataset
-
+import importlib
 class Solver():
     def __init__(self, model, cfg):
         if cfg.scale > 0:
@@ -32,7 +32,7 @@ class Solver():
        
         self.train_data = TrainDataset(cfg.train_data_path, 
                                        scale=cfg.scale, 
-                                       size=cfg.patch_size)
+                                       size=cfg.patch_size,cfg.ds_len)
         
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=cfg.batch_size,
@@ -65,7 +65,7 @@ class Solver():
         learning_rate = cfg.lr
         while True:
             for inputs in self.train_loader:
-               
+
                 #print(self.step)
                 self.refiner.train()
 

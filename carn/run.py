@@ -27,6 +27,7 @@ if __name__=='__main__':
     
     
     parser.add_argument("--num_gpu", type=int, default=1)
+    parser.add_argument("--ds_len", type=int, default=800)
     parser.add_argument("--shave", type=int, default=20)
     parser.add_argument("--scale", type=int, default=2)
 
