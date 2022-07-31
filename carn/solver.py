@@ -65,6 +65,7 @@ class Solver():
         learning_rate = cfg.lr
         while True:
             for inputs in self.train_loader:
+                print(inputs.size())
                 #print(self.step)
                 self.refiner.train()
 
