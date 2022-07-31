@@ -86,7 +86,8 @@ class TrainDataset(data.Dataset):
     def __len__(self):
         if self.length:
             return self.length
-        else return self.hrlen
+        else:
+            return self.hrlen
         
 
 class TestDataset(data.Dataset):
