@@ -107,7 +107,7 @@ class TestDataset(data.Dataset):
             self.lr = [name for name in all_files if "LR" in name]
             '''
             self.hr = glob.glob(os.path.join(dirname, "hr_test","*.dat"))
-            self.hr = glob.glob(os.path.join(dirname, "lr_test","*.dat"))
+            self.lr = glob.glob(os.path.join(dirname, "lr_test","*.dat"))
 
         self.hr.sort()
         self.lr.sort()
