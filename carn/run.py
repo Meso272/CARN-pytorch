@@ -37,7 +37,7 @@ if __name__=='__main__':
     parser.add_argument("--epoch", type=int, default=4000)
     parser.add_argument("--patch_size", type=int, default=64)
     parser.add_argument("--batch_size", type=int, default=64)
-    parser.add_argument("--save_interval", type=int, default=400)
+    parser.add_argument("--save_interval", type=int, default=1000)
     
     parser.add_argument("--lr", type=float, default=0.0001)
     parser.add_argument("--gamma", type=float, default=0.99983)
