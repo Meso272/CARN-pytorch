@@ -31,7 +31,7 @@ class SRexperiment(pl.LightningModule):
             self.loss_fn = nn.MSELoss()
         elif cfg.loss_fn in ["L1"]: 
             self.loss_fn = nn.L1Loss()
-        elif cfg.loss_fn in ["SmoothL1"]:
+        else:
             self.loss_fn = nn.SmoothL1Loss()
 
         #self.cur_scale=self.cfg.scale

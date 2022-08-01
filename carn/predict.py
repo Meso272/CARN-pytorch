@@ -20,6 +20,8 @@ def parse_args():
     parser.add_argument("--cuda", action="store_true")
     parser.add_argument("--scale", type=int, default=2)
     parser.add_argument("--shave", type=int, default=20)
+    parser.add_argument("--loss_fn", type=str, 
+                        choices=["MSE", "L1", "SmoothL1"], default="L1")
 
     return parser.parse_args()
 
@@ -85,6 +87,7 @@ def sample(net, device, dataset, cfg):
 
 
 def main(cfg):
+    module = importlib.import_module("model.{}".format(cfg.model))
     model=SRexperiment.load_from_checkpoint(cfg.ckpt_path)
 
     model.eval()
