@@ -38,6 +38,7 @@ class SRexperiment(pl.LightningModule):
         
         self.curr_device = None
         self.hold_graph = False
+        self.save_hyperparameters()
   
 
 
