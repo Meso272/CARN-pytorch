@@ -90,16 +90,16 @@ def main(cfg):
 
     net = importlib.import_module("model.{}".format(cfg.model)).Net
     model=SRexperiment(net,cfg)
-    print("0")
+    #print("0")
     checkpoint = torch.load(cfg.ckpt_path, map_location=lambda storage, loc: storage)
-    print("1")
+    #print("1")
     model.load_state_dict(checkpoint['state_dict'])
-    print("2")
+    #print("2")
     dataset = TestDataset(cfg.test_data_dir, cfg.scale)
-    print("3")
+    #print("3")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     sample(model, device, dataset, cfg)
-    print("4")
+    #print("4")
  
 
 if __name__ == "__main__":

@@ -111,7 +111,7 @@ class TestDataset(data.Dataset):
 
         self.hr.sort()
         self.lr.sort()
-        print(len(self.hr))
+        #print(len(self.hr))
         self.transform = transforms.Compose([
             transforms.ToTensor()
         ])
