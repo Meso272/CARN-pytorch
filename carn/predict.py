@@ -88,9 +88,8 @@ def sample(net, device, dataset, cfg):
 
 def main(cfg):
 
-    module = importlib.import_module("model.{}".format(cfg.model))
-    model=SRexperiment(module,cfg)
-    model.load_from_checkpoint(cfg.ckpt_path)
+    net = importlib.import_module("model.{}".format(cfg.model)).Net
+    model=SRexperiment.load_from_checkpoint(cfg.ckpt_path,net,cfg)
 
     model.eval()
     
