@@ -87,13 +87,15 @@ def sample(net, device, dataset, cfg):
 
 
 def main(cfg):
+
     module = importlib.import_module("model.{}".format(cfg.model))
-    model=SRexperiment.load_from_checkpoint(cfg.ckpt_path,module,cfg)
+    model=SRexperiment(module,cfg)
+    model.load_from_checkpoint(cfg.ckpt_path)
 
     model.eval()
     
     dataset = TestDataset(cfg.test_data_dir, cfg.scale)
-    sample(net, device, dataset, cfg)
+    sample(model, device, dataset, cfg)
  
 
 if __name__ == "__main__":
