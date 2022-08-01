@@ -95,6 +95,7 @@ def main(cfg):
     model.load_state_dict(checkpoint['state_dict'])
     
     dataset = TestDataset(cfg.test_data_dir, cfg.scale)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     sample(model, device, dataset, cfg)
  
 
