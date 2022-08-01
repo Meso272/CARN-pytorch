@@ -91,7 +91,7 @@ def main(cfg):
     net = importlib.import_module("model.{}".format(cfg.model)).Net
     model=SRexperiment(net,cfg)
 
-    model=model.load_from_checkpoint(cfg.ckpt_path)
+    model=model.load_from_checkpoint(cfg.ckpt_path,model,cfg)
     
     dataset = TestDataset(cfg.test_data_dir, cfg.scale)
     sample(model, device, dataset, cfg)
