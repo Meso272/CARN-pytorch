@@ -17,8 +17,8 @@ def random_crop(hr, lr, size, scale):
 
     crop_lr = lr[y:y+size, x:x+size].copy()
     crop_hr = hr[hy:hy+hsize, hx:hx+hsize].copy()
-    crop_test=crop_hr[::2,::2]
-    print(np.max(np.abs(crop_lr-crop_test)))
+    #crop_test=crop_hr[::2,::2]
+    #print(np.max(np.abs(crop_lr-crop_test)))
 
     return crop_hr, crop_lr
 
