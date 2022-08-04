@@ -34,6 +34,7 @@ if __name__=='__main__':
     parser.add_argument("--verbose", action="store_true", default="store_true")
 
     parser.add_argument("--group", type=int, default=1)
+    parser.add_argument("--aug", type=int, default=1)
     parser.add_argument("--epoch", type=int, default=4000)
     parser.add_argument("--patch_size", type=int, default=64)
     parser.add_argument("--batch_size", type=int, default=64)

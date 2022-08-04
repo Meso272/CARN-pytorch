@@ -119,7 +119,7 @@ class SRexperiment(pl.LightningModule):
     def train_dataloader(self):
         train_dataset=TrainDataset(self.cfg.train_data_path, 
                                        scale=self.cfg.scale, 
-                                       size=self.cfg.patch_size,fix_length=self.cfg.ds_len)
+                                       size=self.cfg.patch_size,fix_length=self.cfg.ds_len,aug=self.cfg.aug)
         return DataLoader(train_dataset,
                                        batch_size=self.cfg.batch_size,
                                        num_workers=32,

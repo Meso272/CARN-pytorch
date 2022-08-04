@@ -17,6 +17,8 @@ def random_crop(hr, lr, size, scale):
 
     crop_lr = lr[y:y+size, x:x+size].copy()
     crop_hr = hr[hy:hy+hsize, hx:hx+hsize].copy()
+    crop_test=crop_hr[::2,::2]
+    print(np.max(np.abs(crop_lr-crop_test)))
 
     return crop_hr, crop_lr
 
@@ -39,9 +41,9 @@ def random_flip_and_rotate(im1, im2):
 
 
 class TrainDataset(data.Dataset):
-    def __init__(self, path, size, scale,fix_length=0):
+    def __init__(self, path, size, scale,fix_length=0,aug=1):
         super(TrainDataset, self).__init__()
-
+        self.aug=aug
         self.size = size
         self.length=fix_length
         #print("01")
@@ -76,8 +78,8 @@ class TrainDataset(data.Dataset):
         item = [(self.hr[index], self.lr[i][index]) for i, _ in enumerate(self.lr)]
        
         item = [random_crop(hr, lr, size, self.scale[i]) for i, (hr, lr) in enumerate(item)]
-       
-        item = [random_flip_and_rotate(hr, lr) for hr, lr in item]
+        if self.aug:
+            item = [random_flip_and_rotate(hr, lr) for hr, lr in item]
         
 
         
@@ -108,6 +110,7 @@ class TestDataset(data.Dataset):
             '''
             self.hr = glob.glob(os.path.join(dirname, "hr_test","*.dat"))
             self.lr = glob.glob(os.path.join(dirname, "lr_test","*.dat"))
+            
 
         self.hr.sort()
         self.lr.sort()
