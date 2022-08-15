@@ -103,13 +103,14 @@ class TestDataset(data.Dataset):
             self.lr = glob.glob(os.path.join("{}_valid_LR_bicubic".format(dirname), 
                                              "X{}/*.png".format(scale)))
         else:
-            '''
+            
             all_files = glob.glob(os.path.join(dirname, "x{}/*.png".format(scale)))
             self.hr = [name for name in all_files if "HR" in name]
             self.lr = [name for name in all_files if "LR" in name]
             '''
             self.hr = glob.glob(os.path.join(dirname, "hr_test","*.dat"))
             self.lr = glob.glob(os.path.join(dirname, "lr_test","*.dat"))
+            '''
             
 
         self.hr.sort()
@@ -120,13 +121,13 @@ class TestDataset(data.Dataset):
         ])
 
     def __getitem__(self, index):
-        '''
+        
         hr = Image.open(self.hr[index])
         lr = Image.open(self.lr[index])
         '''
         hr=np.fromfile(self.hr[index],dtype=np.float32).reshape((1800,3600,1))
         lr=np.fromfile(self.lr[index],dtype=np.float32).reshape((900,1800,1))
-        
+        '''
         filename = self.hr[index].split("/")[-1]
 
         return self.transform(hr), self.transform(lr), filename
